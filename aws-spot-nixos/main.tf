@@ -124,6 +124,11 @@ resource "coder_agent" "box" {
   os   = "linux"
 }
 
+resource "coder_agent_instance" "box" {
+  agent_id = coder_agent.box.id
+  instance_id = aws_spot_instance_request.box.spot_instance_id
+}
+
 resource "aws_spot_instance_request" "box" {
   ami               = local.images[var.region]
   availability_zone = "${var.region}a"
@@ -140,5 +145,21 @@ resource "aws_spot_instance_request" "box" {
   user_data = data.coder_workspace.me.transition == "start" ? local.user_data_start : local.user_data_end
   tags = {
     Name = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+  }
+}
+
+resource "coder_metadata" "workspace_info" {
+  resource_id = aws_spot_instance_request.box.spot_instance_id
+  item {
+    key   = "region"
+    value = var.region
+  }
+  item {
+    key   = "instance type"
+    value = aws_spot_instance_request.box.instance_type
+  }
+  item {
+    key   = "disk"
+    value = "${aws_spot_instance_request.box.root_block_device[0].volume_size} GiB"
   }
 }
