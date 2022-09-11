@@ -124,10 +124,13 @@ resource "coder_agent" "box" {
   os   = "linux"
 }
 
-resource "aws_instance" "box" {
+resource "aws_spot_instance_request" "box" {
   ami               = local.images[var.region]
   availability_zone = "${var.region}a"
   instance_type     = var.instance_type
+
+  wait_for_fulfillment = true
+  instance_interruption_behavior = "stop"
 
   root_block_device {
     volume_size = 30

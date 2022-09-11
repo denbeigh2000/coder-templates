@@ -1,6 +1,6 @@
 ---
-name: NixOS
-description: Manage a NixOS development workspace on EC2.
+name: NixOS (Spot instance)
+description: Manage a NixOS development workspace on EC2 with Spot Instances.
 tags: [cloud, aws, nix, nixos, flakes]
 ---
 
