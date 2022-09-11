@@ -124,6 +124,11 @@ resource "coder_agent" "box" {
   os   = "linux"
 }
 
+resource "coder_agent_instance" "box" {
+  agent_id = coder_agent.box.id
+  instance_id = aws_instance.box.id
+}
+
 resource "aws_instance" "box" {
   ami               = local.images[var.region]
   availability_zone = "${var.region}a"
@@ -137,5 +142,21 @@ resource "aws_instance" "box" {
   user_data = data.coder_workspace.me.transition == "start" ? local.user_data_start : local.user_data_end
   tags = {
     Name = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+  }
+}
+
+resource "coder_metadata" "workspace_info" {
+  resource_id = aws_instance.box.id
+  item {
+    key   = "region"
+    value = var.region
+  }
+  item {
+    key   = "instance type"
+    value = aws_instance.box.instance_type
+  }
+  item {
+    key   = "disk"
+    value = "${aws_instance.box.root_block_device[0].volume_size} GiB"
   }
 }
