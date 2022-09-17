@@ -42,11 +42,13 @@ variable "instance_type" {
   validation {
     condition = contains([
       "t3.micro",
-      "t3.small",
-      "t3.medium",
-      "t3.large",
       "t3.xlarge",
       "t3.2xlarge",
+      "t3a.micro",
+      "t3a.xlarge",
+      "t3a.2xlarge",
+      "c5.xlarge",
+      "c1.xlarge",
     ], var.instance_type)
     error_message = "Invalid instance type!"
   }
