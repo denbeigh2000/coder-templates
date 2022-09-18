@@ -56,6 +56,18 @@ variable "flake_uri" {
   description = "What flake should be run?"
 }
 
+variable "root_disk_size" {
+  description = "What should the size of the root disk be?"
+  type = number
+  default = 15
+}
+
+variable "home_disk_size" {
+  description = "What should the size of the home disk be?"
+  type = number
+  default = 10
+}
+
 locals {
   # rg -F 'x86_64-linux.hvm-ebs' nixos/modules/virtualisation/amazon-ec2-amis.nix \
   #   | grep 22.05 \
@@ -132,8 +144,14 @@ resource "coder_agent_instance" "box" {
 
 resource "aws_ebs_volume" "home_disk" {
   availability_zone = "${var.region}a"
-  size = 10
+  size = var.home_disk_size
   type = "gp3"
+
+  tags = {
+    App = "coder"
+    CoderPurpose = "home-disk-volume"
+    CoderUser = data.coder_workspace.me.owner
+  }
 }
 
 resource "aws_volume_attachment" "box_home_disk" {
@@ -151,13 +169,16 @@ resource "aws_instance" "box" {
   instance_type     = var.instance_type
 
   root_block_device {
-    volume_size = 15
+    volume_size = var.root_disk_size
     volume_type = "gp3"
   }
 
   user_data = data.coder_workspace.me.transition == "start" ? local.user_data_start : local.user_data_end
   tags = {
     Name = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+    App = "coder"
+    CoderPurpose = "workspace-instance"
+    CoderUser = data.coder_workspace.me.owner
   }
 }
 
@@ -176,6 +197,11 @@ resource "coder_metadata" "workspace_info" {
     key   = "root disk"
     value = "${aws_spot_instance.box[0].root_block_device[0].volume_size} GiB"
   }
+}
+
+resource "coder_metadata" "disk_info" {
+  resource_id = aws_ebs_volume.home_disk.id
+
   item {
     key = "home disk"
     value = "${aws_ebs_volume.home_disk.size} GiB"

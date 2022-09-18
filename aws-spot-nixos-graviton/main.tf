@@ -56,6 +56,18 @@ variable "flake_uri" {
   description = "What flake should be run?"
 }
 
+variable "root_disk_size" {
+  description = "What should the size of the root disk be?"
+  type = number
+  default = 15
+}
+
+variable "home_disk_size" {
+  description = "What should the size of the home disk be?"
+  type = number
+  default = 10
+}
+
 locals {
   # rg -F aarch64-linux.hvm-ebs' nixos/modules/virtualisation/amazon-ec2-amis.nix \
   #   | grep 22.05 \
@@ -132,8 +144,14 @@ resource "coder_agent_instance" "box" {
 
 resource "aws_ebs_volume" "home_disk" {
   availability_zone = "${var.region}a"
-  size = 10
+  size = var.home_disk_size
   type = "gp3"
+
+  tags = {
+    App = "coder"
+    CoderPurpose = "home-disk-volume"
+    CoderUser = data.coder_workspace.me.owner
+  }
 }
 
 resource "aws_volume_attachment" "box_home_disk" {
@@ -151,7 +169,7 @@ resource "aws_spot_instance_request" "box" {
   instance_type     = var.instance_type
 
   root_block_device {
-    volume_size = 15
+    volume_size = var.root_disk_size
     volume_type = "gp3"
   }
 
@@ -161,12 +179,29 @@ resource "aws_spot_instance_request" "box" {
   user_data = local.user_data_start
   tags = {
     Name = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+    App = "coder"
+    CoderPurpose = "workspace-spot-instance"
+    CoderUser = data.coder_workspace.me.owner
+  }
+}
+
+data "aws_ec2_spot_price" "box" {
+  instance_type     = "${var.instance_type}"
+  availability_zone = "${var.region}a"
+
+  filter {
+    name   = "product-description"
+    values = ["Linux/UNIX"]
   }
 }
 
 resource "coder_metadata" "workspace_info" {
   count = data.coder_workspace.me.start_count
   resource_id = aws_spot_instance_request.box[0].id
+  item {
+    key = "cost"
+    value = "${data.aws_ec2_spot_price.box.spot_price}/hr"
+  }
   item {
     key   = "region"
     value = var.region
@@ -176,11 +211,16 @@ resource "coder_metadata" "workspace_info" {
     value = aws_spot_instance_request.box[0].instance_type
   }
   item {
-    key   = "root disk"
+    key   = "disk size (root)"
     value = "${aws_spot_instance_request.box[0].root_block_device[0].volume_size} GiB"
   }
+}
+
+resource "coder_metadata" "home_disk_info" {
+  resource_id = aws_ebs_volume.home_disk.id
+
   item {
-    key = "home disk"
+    key   = "disk size (home)"
     value = "${aws_ebs_volume.home_disk.size} GiB"
   }
 }
