@@ -125,17 +125,33 @@ resource "coder_agent" "box" {
 }
 
 resource "coder_agent_instance" "box" {
+  count = data.coder_workspace.me.start_count
   agent_id = coder_agent.box.id
-  instance_id = aws_instance.box.id
+  instance_id = aws_instance.box[0].id
+}
+
+resource "aws_ebs_volume" "home_disk" {
+  availability_zone = "${var.region}a"
+  size = 10
+  type = "gp3"
+}
+
+resource "aws_volume_attachment" "box_home_disk" {
+  count = data.coder_workspace.me.start_count
+  # NOTE: This is tied to a volume mount in NixOS configs for Coder workspaces.
+  device_name = "/dev/xvdb"
+  volume_id = aws_ebs_volume.home_disk.id
+  instance_id = aws_instance.box[0].spot_instance_id
 }
 
 resource "aws_instance" "box" {
+  count = data.coder_workspace.me.start_count
   ami               = local.images[var.region]
   availability_zone = "${var.region}a"
   instance_type     = var.instance_type
 
   root_block_device {
-    volume_size = 30
+    volume_size = 15
     volume_type = "gp3"
   }
 
@@ -146,17 +162,22 @@ resource "aws_instance" "box" {
 }
 
 resource "coder_metadata" "workspace_info" {
-  resource_id = aws_instance.box.id
+  count = data.coder_workspace.me.start_count
+  resource_id = aws_spot_instance.box[0].id
   item {
     key   = "region"
     value = var.region
   }
   item {
     key   = "instance type"
-    value = aws_instance.box.instance_type
+    value = aws_spot_instance.box[0].instance_type
   }
   item {
-    key   = "disk"
-    value = "${aws_instance.box.root_block_device[0].volume_size} GiB"
+    key   = "root disk"
+    value = "${aws_spot_instance.box[0].root_block_device[0].volume_size} GiB"
+  }
+  item {
+    key = "home disk"
+    value = "${aws_ebs_volume.home_disk.size} GiB"
   }
 }
