@@ -1,13 +1,13 @@
 ---
-name: NixOS (Spot instance)
-description: Manage a NixOS development workspace on EC2 with Spot Instances.
+name: NixOS (Graviton Spot instance)
+description: Manage a NixOS development workspace on EC2 with Graviton Spot Instances.
 tags: [cloud, aws, nix, nixos, flakes, arm]
 ---
 
-# aws-nixos
+# aws-nixos-graviton
 
 A simple template that allows you to use a NixOS flake to configure your Coder
-workspace.
+workspace on AWS Graviton Spot Instances.
 
 See [here](https://nixos.wiki/wiki/Flakes#Using_nix_flakes_with_NixOS) for more
 information about distributing a NixOS configuration via a flake.
