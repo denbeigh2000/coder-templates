@@ -1,8 +1,21 @@
-provider "aws" {
-  region = var.region
+terraform {
+  required_providers {
+    coder = {
+      source  = "coder/coder"
+      version = "0.4.9"
+    }
+
+    aws = {
+      source  = "aws"
+    }
+  }
 }
 
 data "coder_workspace" "me" {
+}
+
+module "data" {
+  source = "../data"
 }
 
 locals {
@@ -11,7 +24,7 @@ locals {
 
 resource "aws_instance" "box" {
   count = data.coder_workspace.me.start_count
-  ami               = local.images[var.region]
+  ami               = module.data.images[var.arch][var.region]
   availability_zone = "${var.region}a"
   instance_type     = var.instance_type
 
@@ -20,7 +33,7 @@ resource "aws_instance" "box" {
     volume_type = "gp3"
   }
 
-  user_data = data.coder_workspace.me.transition == "start" ? local.user_data_start : local.user_data_end
+  user_data = data.coder_workspace.me.transition == "start" ? var.user_data_start : var.user_data_end
   tags = {
     Name = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
     App = "coder"
@@ -31,18 +44,18 @@ resource "aws_instance" "box" {
 
 resource "coder_metadata" "workspace_info" {
   count = data.coder_workspace.me.start_count
-  resource_id = aws_spot_instance.box[0].id
+  resource_id = aws_instance.box[0].id
   item {
     key   = "region"
     value = var.region
   }
   item {
     key   = "instance type"
-    value = aws_spot_instance.box[0].instance_type
+    value = aws_instance.box[0].instance_type
   }
   item {
     key   = "root disk"
-    value = "${aws_spot_instance.box[0].root_block_device[0].volume_size} GiB"
+    value = "${aws_instance.box[0].root_block_device[0].volume_size} GiB"
   }
 }
 

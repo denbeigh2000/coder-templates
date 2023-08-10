@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    coder = {
+      source  = "coder/coder"
+      version = "0.4.9"
+    }
+  }
+}
+
 locals {
   # User data is used to stop/start AWS instances. See:
   # https://github.com/hashicorp/terraform-provider-aws/issues/22
@@ -20,46 +29,52 @@ EOT
 #!/usr/bin/env bash
 sudo shutdown -h now
 EOT
-}
 
-provider "aws" {
-  region = var.region
+  is_on       = data.coder_workspace.me.start_count != 0
+  instance_id = var.is_spot ? module.instance_spot[0].instance_id : module.instance_nonspot[0].instance_id
+
+  archs = {
+    aarch64 = "arm64"
+    x86_64 = "amd64"
+  }
 }
 
 data "coder_workspace" "me" {
 }
 
 resource "coder_agent" "box" {
-  arch = var.arch
+  arch = local.archs[var.arch]
   auth = "aws-instance-identity"
   os   = "linux"
 }
 
 resource "coder_agent_instance" "box" {
-  count = var.instance_id != null ? 1 : 0
+  count = local.is_on ? 1 : 0
   agent_id = coder_agent.box.id
-  instance_id = aws_spot_instance_request.box[0].spot_instance_id
+  instance_id = local.instance_id
 }
 
 module "instance_spot" {
   count = var.is_spot ? data.coder_workspace.me.start_count : 0
   source = "../instance-spot"
 
+  region = var.region
+  arch = var.arch
   root_disk_size = var.root_disk_size
   instance_type = var.instance_type
-  root_disk_size = var.root_disk_size
-  user_data_start = var.user_data_start
-  user_data_end = var.user_data_end
-  spot_prce = var.spot_prce
+  user_data_start = local.user_data_start
+  user_data_end = local.user_data_end
+  spot_price = var.spot_price
 }
 
 module "instance_nonspot" {
   count = (!var.is_spot) ? data.coder_workspace.me.start_count : 0
   source = "../instance-nonspot"
 
+  region = var.region
+  arch = var.arch
   root_disk_size = var.root_disk_size
   instance_type = var.instance_type
-  root_disk_size = var.root_disk_size
-  user_data_start = var.user_data_start
-  user_data_end = var.user_data_end
+  user_data_start = local.user_data_start
+  user_data_end = local.user_data_end
 }

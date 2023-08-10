@@ -1,8 +1,21 @@
-provider "aws" {
-  region = var.region
+terraform {
+  required_providers {
+    coder = {
+      source  = "coder/coder"
+      version = "0.4.9"
+    }
+
+    aws = {
+      source  = "aws"
+    }
+  }
 }
 
 data "coder_workspace" "me" {
+}
+
+module "data" {
+  source = "../data"
 }
 
 locals {
@@ -10,7 +23,8 @@ locals {
 }
 
 resource "aws_spot_instance_request" "box" {
-  ami               = local.images[var.region]
+  count             = data.coder_workspace.me.start_count
+  ami               = module.data.images[var.arch][var.region]
   availability_zone = "${var.region}a"
   instance_type     = var.instance_type
 
@@ -24,7 +38,7 @@ resource "aws_spot_instance_request" "box" {
 
   user_data = data.coder_workspace.me.transition == "start" ? var.user_data_start : var.user_data_end
   tags = {
-    Name = var.instance_name != "" ? var.instance_name : locals.default_name
+    Name = var.instance_name != "" ? var.instance_name : local.default_name
     App = "coder"
     CoderPurpose = "workspace-spot-instance"
     CoderUser = data.coder_workspace.me.owner

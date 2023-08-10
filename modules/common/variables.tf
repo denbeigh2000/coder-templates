@@ -2,7 +2,6 @@ variable "instance_id" {
   description = "[Spot] Instance ID (null if stopped)"
   type = string
   default = null
-  required = false
 }
 
 variable "region" {

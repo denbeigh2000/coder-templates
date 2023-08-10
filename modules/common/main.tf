@@ -1,8 +1,17 @@
-data "coder_workspace" "me" {
+terraform {
+  required_providers {
+    coder = {
+      source  = "coder/coder"
+      version = "0.4.9"
+    }
+
+    aws = {
+      source  = "aws"
+    }
+  }
 }
 
-provider "aws" {
-  region = var.region
+data "coder_workspace" "me" {
 }
 
 resource "aws_ebs_volume" "home_disk" {

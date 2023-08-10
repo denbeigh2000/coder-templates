@@ -2,7 +2,8 @@ variable "arch" {
   description = "Architecture of the instance"
   type = string
   validation {
-    condition = contains(["x86_64", "aarch64"])
+    condition = contains(["x86_64", "aarch64"], var.arch)
+    error_message = "invalid architecture"
   }
 }
 
@@ -13,8 +14,8 @@ variable "is_spot" {
 
 variable "spot_price" {
   description = "Spot price (in cents??)"
+  default = null
   type = number
-  required = false
 }
 
 variable "region" {
@@ -29,4 +30,9 @@ variable "root_disk_size" {
   description = "What should the size of the root disk be?"
   type = number
   default = 15
+}
+
+variable "flake_uri" {
+  description = "NixOS configuration flake URI to apply"
+  type = string
 }
