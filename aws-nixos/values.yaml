@@ -1,5 +1,0 @@
-flake_uri: github:denbeigh2000/.dotfiles#coder-ec2-x86
-region: us-west-2
-instance_type: t3.micro
-root_disk_size: 15
-home_disk_size: 10
