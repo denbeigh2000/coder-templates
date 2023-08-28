@@ -41,18 +41,6 @@ data "coder_parameter" "home_disk_size" {
   default = 10
 }
 
-data "coder_parameter" "spot_price" {
-  count = var.is_spot ? 1 : 0
-
-  name         = "spot_price"
-  display_name = "Spot price"
-  description  = "Maximum spot price to pay (default: unlimited)"
-  type         = "number"
-  mutable      = true
-
-  default = 0
-}
-
 data "coder_parameter" "instance_type" {
   name         = "instance_type"
   display_name = "Instance type to deploy"

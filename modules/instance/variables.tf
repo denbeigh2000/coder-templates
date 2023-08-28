@@ -20,10 +20,12 @@ variable "spot_price" {
 
 variable "region" {
   description = "AWS region for resources"
+  type        = string
 }
 
 variable "instance_type" {
   description = "Instance type for resource"
+  type        = string
 }
 
 variable "root_disk_size" {
@@ -38,8 +40,11 @@ variable "flake_uri" {
 }
 
 // This has to be in the top level for coder to be "aware" of it, apparently
+// type = any because we don't concern ourselves with this type anyway, we just
+// pass it to other resources from the Coder provider.
 variable "coder_agent" {
   description = "Coder agent from top-level"
+  type        = any
 }
 
 variable "coder_agent_user" {

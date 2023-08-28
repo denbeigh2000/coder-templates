@@ -1,11 +1,14 @@
 terraform {
+  required_version = ">= 1.5"
   required_providers {
     coder = {
       source  = "coder/coder"
+      version = "~> 0.11"
     }
 
     aws = {
       source  = "aws"
+      version = "~> 5.0"
     }
   }
 }
@@ -18,11 +21,10 @@ module "data" {
 }
 
 locals {
-  default_name = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
 }
 
 resource "aws_instance" "box" {
-  count = data.coder_workspace.me.start_count
+  count             = data.coder_workspace.me.start_count
   ami               = module.data.images[var.arch][var.region]
   availability_zone = "${var.region}a"
   instance_type     = var.instance_type
@@ -34,15 +36,15 @@ resource "aws_instance" "box" {
 
   user_data = data.coder_workspace.me.transition == "start" ? var.user_data_start : var.user_data_end
   tags = {
-    Name = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
-    App = "coder"
+    Name         = "coder-${data.coder_workspace.me.owner}-${data.coder_workspace.me.name}"
+    App          = "coder"
     CoderPurpose = "workspace-instance"
-    CoderUser = data.coder_workspace.me.owner
+    CoderUser    = data.coder_workspace.me.owner
   }
 }
 
 resource "coder_metadata" "workspace_info" {
-  count = data.coder_workspace.me.start_count
+  count       = data.coder_workspace.me.start_count
   resource_id = aws_instance.box[0].id
   item {
     key   = "region"

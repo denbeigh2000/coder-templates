@@ -1,40 +1,34 @@
 variable "arch" {
   description = "Architecture of the instance"
-  type = string
+  type        = string
   validation {
-    condition = contains(["x86_64", "aarch64"], var.arch)
+    condition     = contains(["x86_64", "aarch64"], var.arch)
     error_message = "invalid architecture"
   }
 }
 
-variable "instance_name" {
-  description = "Name of instance"
-  type = string
-  default = ""
-}
-
 variable "region" {
   description = "AWS region for resources"
-  type = string
+  type        = string
 }
 
 variable "instance_type" {
   description = "Instance type for resource"
-  type = string
+  type        = string
 }
 
 variable "root_disk_size" {
   description = "What should the size of the root disk be?"
-  type = number
-  default = 15
+  type        = number
+  default     = 15
 }
 
 variable "user_data_start" {
   description = "Instance startup script"
-  type = string
+  type        = string
 }
 
 variable "user_data_end" {
   description = "Instance shutdown script"
-  type = string
+  type        = string
 }

@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0"
+}
+
 output "images" {
   value = {
     # rg -F 'x86_64-linux.hvm-ebs' nixos/modules/virtualisation/amazon-ec2-amis.nix \
@@ -7,28 +11,28 @@ output "images" {
     #   | sed 's|\(.*\)\."\(.*\)";$|\1 = "\2",|' \
     #   | sort
     x86_64 = {
-      af-south-1 = "ami-0df2f7b42bfbd53e5",
-      ap-east-1 = "ami-07ba84d7321f6f4bb",
+      af-south-1     = "ami-0df2f7b42bfbd53e5",
+      ap-east-1      = "ami-07ba84d7321f6f4bb",
       ap-northeast-1 = "ami-0e37827874573dbbf",
       ap-northeast-2 = "ami-0ff5b3b7738651895",
       ap-northeast-3 = "ami-0a7861571eb44c70c",
-      ap-south-1 = "ami-05c4802ca81d7c95b",
+      ap-south-1     = "ami-05c4802ca81d7c95b",
       ap-southeast-1 = "ami-0aee8193da16bd2db",
       ap-southeast-2 = "ami-008be032289f60d16",
       ap-southeast-3 = "ami-033debde7c1659c96",
-      ca-central-1 = "ami-031821b5f83896474",
-      eu-central-1 = "ami-0d6ee9d5e1c985df6",
-      eu-north-1 = "ami-0cecb1f67b2a837f6",
-      eu-south-1 = "ami-0f9fee15eb5a64ac4",
-      eu-west-1 = "ami-0fc7825fe890f87d1",
-      eu-west-2 = "ami-0e62fef78d2c4f031",
-      eu-west-3 = "ami-01a6e4c1659b08390",
-      me-south-1 = "ami-0a01a7eeffa8f0fd5",
-      sa-east-1 = "ami-09a1760227f929ccf",
-      us-east-1 = "ami-07df5833f04703a2a",
-      us-east-2 = "ami-04dd2f100d9665df5",
-      us-west-1 = "ami-0fe502361fea4216c",
-      us-west-2 = "ami-0749963dd978a57c7",
+      ca-central-1   = "ami-031821b5f83896474",
+      eu-central-1   = "ami-0d6ee9d5e1c985df6",
+      eu-north-1     = "ami-0cecb1f67b2a837f6",
+      eu-south-1     = "ami-0f9fee15eb5a64ac4",
+      eu-west-1      = "ami-0fc7825fe890f87d1",
+      eu-west-2      = "ami-0e62fef78d2c4f031",
+      eu-west-3      = "ami-01a6e4c1659b08390",
+      me-south-1     = "ami-0a01a7eeffa8f0fd5",
+      sa-east-1      = "ami-09a1760227f929ccf",
+      us-east-1      = "ami-07df5833f04703a2a",
+      us-east-2      = "ami-04dd2f100d9665df5",
+      us-west-1      = "ami-0fe502361fea4216c",
+      us-west-2      = "ami-0749963dd978a57c7",
     }
     # rg -F 'aarch64-linux.hvm-ebs' nixos/modules/virtualisation/amazon-ec2-amis.nix \
     #   | grep 23.05 \
@@ -37,28 +41,28 @@ output "images" {
     #   | sed 's|\(.*\)\."\(.*\)";$|\1 = "\2",|' \
     #   | sort
     aarch64 = {
-      af-south-1 = "ami-05d95a055aba9373e",
-      ap-east-1 = "ami-08ae0190b1357465b",
+      af-south-1     = "ami-05d95a055aba9373e",
+      ap-east-1      = "ami-08ae0190b1357465b",
       ap-northeast-1 = "ami-09418b2049c3c9533",
       ap-northeast-2 = "ami-040713ad23b404271",
       ap-northeast-3 = "ami-0c888d6c1d989db68",
-      ap-south-1 = "ami-02da38deb21545675",
+      ap-south-1     = "ami-02da38deb21545675",
       ap-southeast-1 = "ami-06df0713468bea276",
       ap-southeast-2 = "ami-0171ee37ae5104c06",
       ap-southeast-3 = "ami-075da61f5fef1fe80",
-      ca-central-1 = "ami-0ba8bd0a3d0a596f8",
-      eu-central-1 = "ami-0891608ae66031439",
-      eu-north-1 = "ami-0a3ad7ef18d595c68",
-      eu-south-1 = "ami-0fa86b680aa9a0444",
-      eu-west-1 = "ami-0a0609421e5638005",
-      eu-west-2 = "ami-0a415791078f05970",
-      eu-west-3 = "ami-05d9b146317962e3b",
-      me-south-1 = "ami-0019b591acf30aa66",
-      sa-east-1 = "ami-030d6c30d91f06cc7",
-      us-east-1 = "ami-0a061ca437b63df33",
-      us-east-2 = "ami-0bf0b2b8fdfda30e8",
-      us-west-1 = "ami-0e75c8f3deb1f842b",
-      us-west-2 = "ami-0d0979d889078d036",
+      ca-central-1   = "ami-0ba8bd0a3d0a596f8",
+      eu-central-1   = "ami-0891608ae66031439",
+      eu-north-1     = "ami-0a3ad7ef18d595c68",
+      eu-south-1     = "ami-0fa86b680aa9a0444",
+      eu-west-1      = "ami-0a0609421e5638005",
+      eu-west-2      = "ami-0a415791078f05970",
+      eu-west-3      = "ami-05d9b146317962e3b",
+      me-south-1     = "ami-0019b591acf30aa66",
+      sa-east-1      = "ami-030d6c30d91f06cc7",
+      us-east-1      = "ami-0a061ca437b63df33",
+      us-east-2      = "ami-0bf0b2b8fdfda30e8",
+      us-west-1      = "ami-0e75c8f3deb1f842b",
+      us-west-2      = "ami-0d0979d889078d036",
     }
   }
 }

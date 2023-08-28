@@ -1,11 +1,14 @@
 terraform {
+  required_version = ">= 1.5"
   required_providers {
     coder = {
       source  = "coder/coder"
+      version = "~> 0.11"
     }
 
     aws = {
       source  = "aws"
+      version = "~> 5.0"
     }
   }
 }
@@ -27,7 +30,7 @@ resource "aws_spot_instance_request" "box" {
   availability_zone = "${var.region}a"
   instance_type     = var.instance_type
 
-  wait_for_fulfillment = true
+  wait_for_fulfillment           = true
   instance_interruption_behavior = "stop"
 
   root_block_device {
@@ -37,18 +40,18 @@ resource "aws_spot_instance_request" "box" {
 
   user_data = data.coder_workspace.me.transition == "start" ? var.user_data_start : var.user_data_end
   tags = {
-    Name = var.instance_name != "" ? var.instance_name : local.default_name
-    App = "coder"
+    Name         = var.instance_name != "" ? var.instance_name : local.default_name
+    App          = "coder"
     CoderPurpose = "workspace-spot-instance"
-    CoderUser = data.coder_workspace.me.owner
+    CoderUser    = data.coder_workspace.me.owner
   }
 }
 
 resource "coder_metadata" "workspace_info" {
-  count = data.coder_workspace.me.start_count
+  count       = data.coder_workspace.me.start_count
   resource_id = aws_spot_instance_request.box[0].id
   item {
-    key = "cost"
+    key   = "cost"
     value = "${data.aws_ec2_spot_price.box.spot_price}/hr"
   }
   item {
@@ -66,7 +69,7 @@ resource "coder_metadata" "workspace_info" {
 }
 
 data "aws_ec2_spot_price" "box" {
-  instance_type     = "${var.instance_type}"
+  instance_type     = var.instance_type
   availability_zone = "${var.region}a"
 
   filter {
