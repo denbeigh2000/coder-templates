@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
-coder templates push --yes -d . aws-nixos               --variable arch=x86_64  --variable is_spot=false
-coder templates push --yes -d . aws-spot-nixos          --variable arch=x86_64  --variable is_spot=true
-coder templates push --yes -d . aws-spot-nixos-graviton --variable arch=aarch64 --variable is_spot=true
+VERB="${1:-push}"
+
+find values -name "*.yaml" -or -name "*.yml" | while read TEMPLATE_FILE
+do
+    TEMPLATE_NAME="$(basename $TEMPLATE_FILE | sed -E 's/\.ya?ml$//')"
+
+    coder templates "$VERB" --yes -d . "$TEMPLATE_NAME" --variables-file "$TEMPLATE_FILE"
+done
