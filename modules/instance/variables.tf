@@ -1,21 +1,21 @@
 variable "arch" {
   description = "Architecture of the instance"
-  type = string
+  type        = string
   validation {
-    condition = contains(["x86_64", "aarch64"], var.arch)
+    condition     = contains(["x86_64", "aarch64"], var.arch)
     error_message = "invalid architecture"
   }
 }
 
 variable "is_spot" {
   description = "Whether to request a spot instance or not"
-  type = bool
+  type        = bool
 }
 
 variable "spot_price" {
   description = "Spot price (in cents??)"
-  default = 0
-  type = number
+  default     = 0
+  type        = number
 }
 
 variable "region" {
@@ -28,16 +28,21 @@ variable "instance_type" {
 
 variable "root_disk_size" {
   description = "What should the size of the root disk be?"
-  type = number
-  default = 15
+  type        = number
+  default     = 15
 }
 
 variable "flake_uri" {
   description = "NixOS configuration flake URI to apply"
-  type = string
+  type        = string
 }
 
 // This has to be in the top level for coder to be "aware" of it, apparently
 variable "coder_agent" {
   description = "Coder agent from top-level"
+}
+
+variable "coder_agent_user" {
+  description = "User to run the coder agent as. This should be created by your Nix config."
+  type        = string
 }

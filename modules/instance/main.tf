@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     coder = {
-      source  = "coder/coder"
+      source = "coder/coder"
     }
   }
 }
@@ -21,7 +21,7 @@ source /etc/profile
 nixos-rebuild switch --flake '${var.flake_uri}'
 hash -r
 export CODER_AGENT_TOKEN=${var.coder_agent.token}
-sudo --preserve-env=CODER_AGENT_TOKEN -u denbeigh bash -c '${var.coder_agent.init_script}'
+sudo --preserve-env=CODER_AGENT_TOKEN -u ${var.coder_agent_user} bash -c '${var.coder_agent.init_script}'
 EOT
 
   user_data_end = <<EOT
@@ -38,26 +38,26 @@ data "coder_workspace" "me" {
 }
 
 module "instance_spot" {
-  count = var.is_spot ? data.coder_workspace.me.start_count : 0
+  count  = var.is_spot ? data.coder_workspace.me.start_count : 0
   source = "../instance-spot"
 
-  region = var.region
-  arch = var.arch
-  root_disk_size = var.root_disk_size
-  instance_type = var.instance_type
+  region          = var.region
+  arch            = var.arch
+  root_disk_size  = var.root_disk_size
+  instance_type   = var.instance_type
   user_data_start = local.user_data_start
-  user_data_end = local.user_data_end
-  spot_price = var.spot_price
+  user_data_end   = local.user_data_end
+  spot_price      = var.spot_price
 }
 
 module "instance_nonspot" {
-  count = (!var.is_spot) ? data.coder_workspace.me.start_count : 0
+  count  = (!var.is_spot) ? data.coder_workspace.me.start_count : 0
   source = "../instance-nonspot"
 
-  region = var.region
-  arch = var.arch
-  root_disk_size = var.root_disk_size
-  instance_type = var.instance_type
+  region          = var.region
+  arch            = var.arch
+  root_disk_size  = var.root_disk_size
+  instance_type   = var.instance_type
   user_data_start = local.user_data_start
-  user_data_end = local.user_data_end
+  user_data_end   = local.user_data_end
 }
