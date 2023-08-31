@@ -43,21 +43,9 @@ relevant to me, but I would consider accepting PRs that implement this in a
 relatively generic way.
 
 ### Debugging
-It can be difficult to debug your NixOS configuration if something goes wrong,
-for the following reasons:
-
-- OS setup is done as root, before the agent is invoked. This is because the
-    agent needs to run as a user that's been setup by your NixOS configuration.
-    This means that logs from nixos-rebuild will not be streamed back to the
-    Coder installation, and and failure to boot will manifest as the agent
-    never phoning home. Coder have an
-    [API endpoint](https://coder.com/docs/v2/latest/api/agents#patch-workspace-agent-logs)
-    that would be feasible to use to post these logs, but I haven't made use of
-    this, PRs welcome.
-- There are no parameters to set security groups/authorised keypairs for the
-    workspace, which means that the instance is inaccessible if the system
-    provisioning fails. It would be feasible to add workspace parameters that
-    set these, but I haven't done this, again PRs welcome.
+If your NixOS configuration fails to apply for whatever reason, the agent will
+still be able to drop you into a shell for your given user. Logs for the
+initial configuration are streamed, and viewable in the UI/CLI.
 
 ### Username
 The agent user is configurable as a workspace parameter, because people can set
@@ -65,3 +53,6 @@ arbitrary usernames in their NixOS configuration. The default username is
 configured as `denbeigh`, because that's the username I use. To change the
 default username, set the `default_agent_user` variable when pushing these
 templates.
+
+The username given **must** correspond to a username created in your NixOS
+configuration.

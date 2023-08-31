@@ -31,6 +31,14 @@ resource "coder_agent" "box" {
   arch = local.arch_mapping[var.arch]
   auth = "aws-instance-identity"
   os   = "linux"
+
+  startup_script          = <<EOT
+#!/usr/bin/env bash
+
+sudo nixos-rebuild switch --flake '${data.coder_parameter.flake_uri.value}'
+hash -r
+EOT
+  startup_script_behavior = "blocking"
 }
 
 resource "coder_agent_instance" "box" {
