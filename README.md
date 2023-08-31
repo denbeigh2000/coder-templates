@@ -39,8 +39,17 @@ IAM role that could fetch items from AWS Secret Manager, and adding logic to
 the setup script to fetch these secrets and put them in the right place.
 
 I haven't implemented any functionality for this, mostly because it's not
-relevant to me, but I would consider accepting PRs that implement this in a
-relatively generic way.
+relevant to me right now, but I would consider accepting PRs that implement
+this in a relatively generic way.
+
+### Startup time
+There may be a short gap (2-3m) between the time the instance finishes
+provisioning and the time Nix logs start being streamed to the UI. This is
+expected, the time is spent applying a minimal bootstrap configuration that
+allows the Coder agent to start as the configured non-root user.
+
+This allows logs from nixos-rebuild to be viewed in the UI, as well as allowing
+SSH into the instance in case the run of nixos-rebuild fails.
 
 ### Debugging
 If your NixOS configuration fails to apply for whatever reason, the agent will
