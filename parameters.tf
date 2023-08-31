@@ -9,8 +9,10 @@ data "coder_parameter" "flake_uri" {
 data "coder_parameter" "agent_user" {
   name         = "agent_user"
   display_name = "Username"
-  description  = "User to login as. This user should be created by your NixOS config."
+  description  = "User to login as. This user should be created by your NixOS config"
+  type         = "string"
   default      = var.default_agent_user
+  mutable      = true
 }
 
 data "coder_parameter" "root_disk_size" {
@@ -43,7 +45,8 @@ data "coder_parameter" "home_disk_size" {
 
 data "coder_parameter" "instance_type" {
   name         = "instance_type"
-  display_name = "Instance type to deploy"
+  display_name = "Instance type"
+  description  = "Instance type to deploy"
   default      = "t3.micro"
   type         = "string"
   mutable      = true
@@ -62,6 +65,7 @@ data "coder_parameter" "region" {
   name         = "region"
   display_name = "Region"
   default      = "us-west-2"
+  type         = "string"
   description  = "Region to deploy instance to"
   mutable      = false
 
