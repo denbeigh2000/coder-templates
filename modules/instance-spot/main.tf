@@ -33,6 +33,8 @@ resource "aws_spot_instance_request" "box" {
   wait_for_fulfillment           = true
   instance_interruption_behavior = "stop"
 
+  spot_price = var.spot_price != 0 ? tostring(var.spot_price) : null
+
   root_block_device {
     volume_size = var.root_disk_size
     volume_type = "gp3"

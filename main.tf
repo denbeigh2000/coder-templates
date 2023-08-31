@@ -60,6 +60,7 @@ module "box" {
   root_disk_size   = data.coder_parameter.root_disk_size.value
   coder_agent_user = data.coder_parameter.agent_user.value
   iam_role_name    = data.coder_parameter.iam_role_name.value != "" ? data.coder_parameter.iam_role_name.value : null
+  spot_price       = var.is_spot ? data.coder_parameter.spot_price[0].value : 0
 }
 
 module "common" {
