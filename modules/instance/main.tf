@@ -57,6 +57,13 @@ EOT
 data "coder_workspace" "me" {
 }
 
+module "iam" {
+  count  = var.iam_role_name != null ? data.coder_workspace.me.start_count : 0
+  source = "../iam"
+
+  iam_role_name = var.iam_role_name
+}
+
 module "instance_spot" {
   count  = var.is_spot ? data.coder_workspace.me.start_count : 0
   source = "../instance-spot"
@@ -68,6 +75,8 @@ module "instance_spot" {
   user_data_start = local.user_data_start
   user_data_end   = local.user_data_end
   spot_price      = var.spot_price
+
+  instance_profile_name = var.iam_role_name != null ? module.iam[0].instance_profile_name : null
 }
 
 module "instance_nonspot" {
@@ -80,4 +89,6 @@ module "instance_nonspot" {
   instance_type   = var.instance_type
   user_data_start = local.user_data_start
   user_data_end   = local.user_data_end
+
+  instance_profile_name = var.iam_role_name != null ? module.iam[0].instance_profile_name : null
 }

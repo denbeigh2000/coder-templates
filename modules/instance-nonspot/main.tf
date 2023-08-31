@@ -41,6 +41,8 @@ resource "aws_instance" "box" {
     CoderPurpose = "workspace-instance"
     CoderUser    = data.coder_workspace.me.owner
   }
+
+  iam_instance_profile = var.instance_profile_name != "" ? var.instance_profile_name : null
 }
 
 resource "coder_metadata" "workspace_info" {

@@ -44,3 +44,8 @@ variable "spot_price" {
   default     = 0
   type        = number
 }
+
+variable "instance_profile_name" {
+  description = "Name of the instance profile to attach to the instance"
+  default     = ""
+}

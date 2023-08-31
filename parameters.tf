@@ -73,3 +73,12 @@ data "coder_parameter" "region" {
     }
   }
 }
+
+data "coder_parameter" "iam_role_name" {
+  name         = "iam_role_name"
+  display_name = "IAM Role Name"
+  description  = "If given, the deployed instance will be able to assume this IAM role. The IAM role must have a sufficiently permissive assume_role_policy to allow EC2 instances to assume the role."
+  default      = ""
+  type         = "string"
+  mutable      = true
+}

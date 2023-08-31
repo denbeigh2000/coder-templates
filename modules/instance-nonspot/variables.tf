@@ -32,3 +32,8 @@ variable "user_data_end" {
   description = "Instance shutdown script"
   type        = string
 }
+
+variable "instance_profile_name" {
+  description = "Name of the instance profile to attach to the instance"
+  default     = ""
+}

@@ -51,3 +51,9 @@ variable "coder_agent_user" {
   description = "User to run the coder agent as. This should be created by your Nix config."
   type        = string
 }
+
+variable "iam_role_name" {
+  description = "Name of AWS IAM role name to attach to the instance."
+  type        = string
+  default     = ""
+}

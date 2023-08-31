@@ -59,6 +59,7 @@ module "box" {
   instance_type    = data.coder_parameter.instance_type.value
   root_disk_size   = data.coder_parameter.root_disk_size.value
   coder_agent_user = data.coder_parameter.agent_user.value
+  iam_role_name    = data.coder_parameter.iam_role_name.value != "" ? data.coder_parameter.iam_role_name.value : null
 }
 
 module "common" {
@@ -87,4 +88,3 @@ resource "coder_metadata" "workspace_info" {
     value = "${data.coder_parameter.root_disk_size.value} GiB"
   }
 }
-
