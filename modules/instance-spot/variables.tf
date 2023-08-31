@@ -38,3 +38,9 @@ variable "user_data_end" {
   description = "Instance shutdown script"
   type        = string
 }
+
+variable "spot_price" {
+  description = "Spot price (in cents??)"
+  default     = 0
+  type        = number
+}
