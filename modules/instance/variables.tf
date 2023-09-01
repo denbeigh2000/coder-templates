@@ -23,11 +23,6 @@ variable "region" {
   type        = string
 }
 
-variable "availability_zone" {
-  description = "AWS availability zone for resources"
-  type        = string
-}
-
 variable "instance_type" {
   description = "Instance type for resource"
   type        = string
@@ -37,6 +32,12 @@ variable "root_disk_size" {
   description = "What should the size of the root disk be?"
   type        = number
   default     = 15
+}
+
+variable "home_disk_size" {
+  description = "What should the size of the root disk be?"
+  type        = number
+  default     = 10
 }
 
 variable "flake_uri" {

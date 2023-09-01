@@ -9,7 +9,7 @@ locals {
 resource "aws_instance" "box" {
   count             = data.coder_workspace.me.start_count
   ami               = module.data.images[var.arch][var.region]
-  availability_zone = var.availability_zone
+  availability_zone = aws_ebs_volume.home_disk.availability_zone
   instance_type     = var.instance_type
 
   root_block_device {
@@ -18,11 +18,20 @@ resource "aws_instance" "box" {
   }
 
   dynamic "instance_market_options" {
+    # HACK: Create a set of size 1 to conditionally request a spot instance.
     for_each = var.is_spot ? toset(["."]) : toset([])
     content {
       market_type = "spot"
       spot_options {
-        max_price = var.spot_price
+        max_price = var.spot_price != "" ? var.spot_price : null
+        # Using the default of one-time means we can't issue a stop command to
+        # the instance.
+        spot_instance_type = "persistent"
+
+        # https://github.com/aws/aws-sdk-ruby/issues/1798#issuecomment-396297308
+        # We cannot use the default of "terminate" for interruptions for
+        # persistent spot requests, and need to explicitly specify stop
+        instance_interruption_behavior = "stop"
       }
     }
   }
@@ -67,11 +76,10 @@ resource "coder_metadata" "spot_workspace_info" {
 data "aws_ec2_spot_price" "box" {
   count             = var.is_spot ? data.coder_workspace.me.start_count : 0
   instance_type     = var.instance_type
-  availability_zone = "${var.region}a"
+  availability_zone = aws_ebs_volume.home_disk.availability_zone
 
   filter {
     name   = "product-description"
     values = ["Linux/UNIX"]
   }
 }
-

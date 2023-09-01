@@ -1,21 +1,3 @@
-terraform {
-  required_version = ">= 1.2"
-  required_providers {
-    coder = {
-      source  = "coder/coder"
-      version = "~> 0.11"
-    }
-
-    aws = {
-      source  = "aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
-data "coder_workspace" "me" {
-}
-
 resource "aws_ebs_volume" "home_disk" {
   # TODO: It would be nice if we could make this "any AZ in this region"
   # instead of hard-coding
@@ -35,7 +17,7 @@ resource "aws_volume_attachment" "box_home_disk" {
   # NOTE: This is tied to a volume mount in NixOS configs for Coder workspaces.
   device_name = "/dev/xvdb"
   volume_id   = aws_ebs_volume.home_disk.id
-  instance_id = var.instance_id
+  instance_id = aws_instance.box[0].id
 }
 
 # TODO: This currently causes push issues due to duplicate metadata
