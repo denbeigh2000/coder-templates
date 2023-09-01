@@ -1,3 +1,3 @@
 output "instance_id" {
-  value = local.is_on ? local.instance_id : null
+  value = local.is_on ? aws_instance.box[0].id : null
 }

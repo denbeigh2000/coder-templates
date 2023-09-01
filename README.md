@@ -30,6 +30,21 @@ directory:
 
 ## Some notes before using this yourself
 
+### Using the home disk
+Because your NixOS config defines the entire system, it must define mounting
+the `/home` device. The backing block device is hard-coded to be available at
+`/dev/xvdb`.
+
+You can accomplish this with the following:
+
+```nix
+filesystems."/home" = {
+  device = "/dev/xvdb";
+  fsType = "ext4";  # Or another filesystem, if you prefer
+  autoFormat = true;
+}
+```
+
 ### Authentication
 This currently depends on your desired flake being publicly available, and
 requiring no secrets to build.

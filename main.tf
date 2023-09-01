@@ -47,28 +47,29 @@ resource "coder_agent_instance" "box" {
   instance_id = module.box[0].instance_id
 }
 
-module "box" {
-  count  = data.coder_workspace.me.start_count
-  source = "./modules/instance"
-
-  coder_agent      = coder_agent.box
-  arch             = var.arch
-  is_spot          = var.is_spot
-  region           = data.coder_parameter.region.value
-  flake_uri        = data.coder_parameter.flake_uri.value
-  instance_type    = data.coder_parameter.instance_type.value
-  root_disk_size   = data.coder_parameter.root_disk_size.value
-  coder_agent_user = data.coder_parameter.agent_user.value
-  iam_role_name    = data.coder_parameter.iam_role_name.value != "" ? data.coder_parameter.iam_role_name.value : null
-  spot_price       = var.is_spot ? data.coder_parameter.spot_price[0].value : 0
-}
-
-module "common" {
-  source = "./modules/common"
+module "home_disk" {
+  source = "./modules/home-disk"
 
   region         = data.coder_parameter.region.value
   instance_id    = data.coder_workspace.me.start_count == 0 ? null : module.box[0].instance_id
   home_disk_size = data.coder_parameter.home_disk_size.value
+}
+
+module "box" {
+  count  = data.coder_workspace.me.start_count
+  source = "./modules/instance"
+
+  coder_agent       = coder_agent.box
+  arch              = var.arch
+  is_spot           = var.is_spot
+  region            = data.coder_parameter.region.value
+  availability_zone = module.home_disk.availability_zone
+  flake_uri         = data.coder_parameter.flake_uri.value
+  instance_type     = data.coder_parameter.instance_type.value
+  root_disk_size    = data.coder_parameter.root_disk_size.value
+  coder_agent_user  = data.coder_parameter.agent_user.value
+  iam_role_name     = data.coder_parameter.iam_role_name.value != "" ? data.coder_parameter.iam_role_name.value : null
+  spot_price        = var.is_spot ? data.coder_parameter.spot_price[0].value : 0
 }
 
 resource "coder_metadata" "workspace_info" {

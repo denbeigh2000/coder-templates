@@ -49,9 +49,7 @@ EOT
 sudo shutdown -h now
 EOT
 
-  is_on       = data.coder_workspace.me.start_count != 0
-  instance_id = var.is_spot ? module.instance_spot[0].instance_id : module.instance_nonspot[0].instance_id
-
+  is_on = data.coder_workspace.me.start_count != 0
 }
 
 data "coder_workspace" "me" {
@@ -64,31 +62,33 @@ module "iam" {
   iam_role_name = var.iam_role_name
 }
 
-module "instance_spot" {
-  count  = var.is_spot ? data.coder_workspace.me.start_count : 0
-  source = "../instance-spot"
-
-  region          = var.region
-  arch            = var.arch
-  root_disk_size  = var.root_disk_size
-  instance_type   = var.instance_type
-  user_data_start = local.user_data_start
-  user_data_end   = local.user_data_end
-  spot_price      = var.spot_price
-
-  instance_profile_name = var.iam_role_name != null ? module.iam[0].instance_profile_name : null
-}
-
-module "instance_nonspot" {
-  count  = (!var.is_spot) ? data.coder_workspace.me.start_count : 0
-  source = "../instance-nonspot"
-
-  region          = var.region
-  arch            = var.arch
-  root_disk_size  = var.root_disk_size
-  instance_type   = var.instance_type
-  user_data_start = local.user_data_start
-  user_data_end   = local.user_data_end
-
-  instance_profile_name = var.iam_role_name != null ? module.iam[0].instance_profile_name : null
-}
+# module "instance_spot" {
+#   count  = var.is_spot ? data.coder_workspace.me.start_count : 0
+#   source = "../instance-spot"
+# 
+#   region            = var.region
+#   availability_zone = var.availability_zone
+#   arch              = var.arch
+#   root_disk_size    = var.root_disk_size
+#   instance_type     = var.instance_type
+#   user_data_start   = local.user_data_start
+#   user_data_end     = local.user_data_end
+#   spot_price        = var.spot_price
+# 
+#   instance_profile_name = var.iam_role_name != null ? module.iam[0].instance_profile_name : null
+# }
+# 
+# module "instance_nonspot" {
+#   count  = (!var.is_spot) ? data.coder_workspace.me.start_count : 0
+#   source = "../instance-nonspot"
+# 
+#   region            = var.region
+#   availability_zone = var.availability_zone
+#   arch              = var.arch
+#   root_disk_size    = var.root_disk_size
+#   instance_type     = var.instance_type
+#   user_data_start   = local.user_data_start
+#   user_data_end     = local.user_data_end
+# 
+#   instance_profile_name = var.iam_role_name != null ? module.iam[0].instance_profile_name : null
+# }
