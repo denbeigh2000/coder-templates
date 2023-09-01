@@ -38,7 +38,7 @@ the `/home` device. The backing block device is hard-coded to be available at
 You can accomplish this with the following:
 
 ```nix
-filesystems."/home" = {
+fileSystems."/home" = {
   device = "/dev/xvdb";
   fsType = "ext4";  # Or another filesystem, if you prefer
   autoFormat = true;
