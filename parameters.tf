@@ -91,8 +91,8 @@ data "coder_parameter" "spot_price" {
   count        = var.is_spot ? 1 : 0
   name         = "spot_price"
   display_name = "Spot price"
-  description  = "Maximum spot price (in cents). Leave at 0 for unlimited"
-  default      = 0
-  type         = "number"
+  description  = "Maximum spot price. Leave empty for unlimited"
+  default      = ""
+  type         = "string"
   mutable      = true
 }

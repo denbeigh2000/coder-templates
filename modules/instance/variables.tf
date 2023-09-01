@@ -13,9 +13,9 @@ variable "is_spot" {
 }
 
 variable "spot_price" {
-  description = "Spot price (in cents??)"
-  default     = 0
-  type        = number
+  description = "Spot price"
+  default     = ""
+  type        = string
 }
 
 variable "region" {

@@ -40,9 +40,9 @@ variable "user_data_end" {
 }
 
 variable "spot_price" {
-  description = "Spot price (in cents??)"
-  default     = 0
-  type        = number
+  description = "Spot price"
+  default     = ""
+  type        = string
 }
 
 variable "instance_profile_name" {
